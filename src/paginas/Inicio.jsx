@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Container, Row, Col, Card, Button, Modal, Pagination } from 'react-bootstrap';
+import { Container, Row, Col, Card, Button, Modal, Pagination, Form } from 'react-bootstrap';
 import FormularioProducto from '../componentes/FormularioProducto';
 import './Inicio.css';
 
@@ -10,10 +10,11 @@ const Inicio = () => {
   const [mostrarModal, setMostrarModal] = useState(false); // Para controlar la visibilidad del modal
   const [paginaActual, setPaginaActual] = useState(1); // Página actual
   const [totalPaginas, setTotalPaginas] = useState(1); // Total de páginas
+  const [busqueda, setBusqueda] = useState(''); // Texto de búsqueda
 
-  const obtenerProductos = async (pagina = 1) => {
+  const obtenerProductos = async (pagina = 1, query = '') => {
     try {
-      const respuesta = await axios.get(`http://localhost:5000/api/productos?page=${pagina}&limit=6`);
+      const respuesta = await axios.get(`http://localhost:5000/api/productos?page=${pagina}&limit=6&query=${query}`);
       setProductos(respuesta.data.productos);
       setPaginaActual(respuesta.data.currentPage);
       setTotalPaginas(respuesta.data.totalPages);
@@ -23,8 +24,8 @@ const Inicio = () => {
   };
 
   useEffect(() => {
-    obtenerProductos(paginaActual); // Cargar productos de la página actual
-  }, [paginaActual]); // Dependencia de página actual
+    obtenerProductos(paginaActual, busqueda); // Actualizar la lista de productos según la búsqueda
+  }, [paginaActual, busqueda]); // Dependencia de página actual y búsqueda
 
   // Función para abrir el modal en modo de creación
   const abrirModalParaCrear = () => {
@@ -47,7 +48,7 @@ const Inicio = () => {
   const eliminarProducto = async (id) => {
     try {
       await axios.delete(`http://localhost:5000/api/productos/${id}`);
-      obtenerProductos(paginaActual); // Refresca la lista de productos manteniendo la página actual
+      obtenerProductos(paginaActual, busqueda); // Refresca la lista de productos manteniendo la búsqueda y la página actual
     } catch (error) {
       console.error('Error al eliminar el producto', error);
     }
@@ -58,9 +59,24 @@ const Inicio = () => {
     setPaginaActual(numeroPagina); // Cambia la página actual
   };
 
+  // Función para manejar el input de búsqueda
+  const manejarCambioBusqueda = (e) => {
+    setBusqueda(e.target.value); // Actualiza el estado de búsqueda
+    setPaginaActual(1); // Reinicia a la página 1 cuando cambia la búsqueda
+  };
+
   return (
     <Container className="my-5">
       <h1 className="text-center mb-4">Inventario de Productos</h1>
+
+      {/* Campo de búsqueda */}
+      <Form.Control
+        type="text"
+        placeholder="Buscar por nombre, descripción o categoría"
+        value={busqueda}
+        onChange={manejarCambioBusqueda}
+        className="mb-4"
+      />
 
       {/* Botón para abrir el modal y crear un nuevo producto */}
       <div className="text-center mb-4">
@@ -119,7 +135,7 @@ const Inicio = () => {
         </Modal.Header>
         <Modal.Body>
           <FormularioProducto
-            obtenerProductos={() => obtenerProductos(paginaActual)} // Mantiene la página actual después de la edición
+            obtenerProductos={() => obtenerProductos(paginaActual, busqueda)} // Mantiene la página y búsqueda actual después de la edición
             productoSeleccionado={productoSeleccionado}
             limpiarSeleccion={cerrarModal}
           />
