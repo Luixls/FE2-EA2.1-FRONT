@@ -11,10 +11,11 @@ const Inicio = () => {
   const [paginaActual, setPaginaActual] = useState(1); // Página actual
   const [totalPaginas, setTotalPaginas] = useState(1); // Total de páginas
   const [busqueda, setBusqueda] = useState(''); // Texto de búsqueda
+  const [categoria, setCategoria] = useState(''); // Filtro de categoría
 
-  const obtenerProductos = async (pagina = 1, query = '') => {
+  const obtenerProductos = async (pagina = 1, query = '', categoria = '') => {
     try {
-      const respuesta = await axios.get(`http://localhost:5000/api/productos?page=${pagina}&limit=6&query=${query}`);
+      const respuesta = await axios.get(`http://localhost:5000/api/productos?page=${pagina}&limit=6&query=${query}&categoria=${categoria}`);
       setProductos(respuesta.data.productos);
       setPaginaActual(respuesta.data.currentPage);
       setTotalPaginas(respuesta.data.totalPages);
@@ -24,8 +25,8 @@ const Inicio = () => {
   };
 
   useEffect(() => {
-    obtenerProductos(paginaActual, busqueda); // Actualizar la lista de productos según la búsqueda
-  }, [paginaActual, busqueda]); // Dependencia de página actual y búsqueda
+    obtenerProductos(paginaActual, busqueda, categoria); // Actualizar la lista de productos según la búsqueda y la categoría
+  }, [paginaActual, busqueda, categoria]); // Dependencia de página actual, búsqueda y categoría
 
   // Función para abrir el modal en modo de creación
   const abrirModalParaCrear = () => {
@@ -48,7 +49,7 @@ const Inicio = () => {
   const eliminarProducto = async (id) => {
     try {
       await axios.delete(`http://localhost:5000/api/productos/${id}`);
-      obtenerProductos(paginaActual, busqueda); // Refresca la lista de productos manteniendo la búsqueda y la página actual
+      obtenerProductos(paginaActual, busqueda, categoria); // Refresca la lista de productos manteniendo la búsqueda y la página actual
     } catch (error) {
       console.error('Error al eliminar el producto', error);
     }
@@ -65,6 +66,12 @@ const Inicio = () => {
     setPaginaActual(1); // Reinicia a la página 1 cuando cambia la búsqueda
   };
 
+  // Función para manejar el filtro de categoría
+  const manejarCambioCategoria = (e) => {
+    setCategoria(e.target.value); // Actualiza el estado de la categoría seleccionada
+    setPaginaActual(1); // Reinicia a la página 1 cuando cambia la categoría
+  };
+
   return (
     <Container className="my-5">
       <h1 className="text-center mb-4">Inventario de Productos</h1>
@@ -77,6 +84,15 @@ const Inicio = () => {
         onChange={manejarCambioBusqueda}
         className="mb-4"
       />
+
+      {/* Filtro por categoría */}
+      <Form.Select value={categoria} onChange={manejarCambioCategoria} className="mb-4">
+        <option value="">Todas las Categorías</option>
+        <option value="camisas">Camisas</option>
+        <option value="pantalones">Pantalones</option>
+        <option value="zapatos">Zapatos</option>
+        <option value="gorras">Gorras</option>
+      </Form.Select>
 
       {/* Botón para abrir el modal y crear un nuevo producto */}
       <div className="text-center mb-4">
@@ -135,7 +151,7 @@ const Inicio = () => {
         </Modal.Header>
         <Modal.Body>
           <FormularioProducto
-            obtenerProductos={() => obtenerProductos(paginaActual, busqueda)} // Mantiene la página y búsqueda actual después de la edición
+            obtenerProductos={() => obtenerProductos(paginaActual, busqueda, categoria)} // Mantiene la página y búsqueda actual después de la edición
             productoSeleccionado={productoSeleccionado}
             limpiarSeleccion={cerrarModal}
           />
