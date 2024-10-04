@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { Form, Button } from 'react-bootstrap';
 
 const FormularioProducto = ({ obtenerProductos, productoSeleccionado, limpiarSeleccion }) => {
   const [producto, setProducto] = useState({
@@ -54,59 +55,85 @@ const FormularioProducto = ({ obtenerProductos, productoSeleccionado, limpiarSel
   };
 
   return (
-    <form onSubmit={manejarEnvio} className="mb-4">
-      <input
-        type="text"
-        name="nombre"
-        placeholder="Nombre"
-        value={producto.nombre}
-        onChange={manejarCambio}
-        required
-      />
-      <select
-        name="categoria"
-        value={producto.categoria}
-        onChange={manejarCambio}
-      >
-        <option value="camisas">Camisas</option>
-        <option value="pantalones">Pantalones</option>
-        <option value="zapatos">Zapatos</option>
-        <option value="gorras">Gorras</option>
-      </select>
-      <input
-        type="text"
-        name="descripcion"
-        placeholder="Descripción"
-        value={producto.descripcion}
-        onChange={manejarCambio}
-      />
-      <input
-        type="number"
-        name="precio"
-        placeholder="Precio"
-        value={producto.precio}
-        onChange={manejarCambio}
-        required
-      />
-      <input
-        type="number"
-        name="cantidad"
-        placeholder="Cantidad"
-        value={producto.cantidad}
-        onChange={manejarCambio}
-        required
-      />
-      <input
-        type="text"
-        name="imagen"
-        placeholder="URL de la imagen"
-        value={producto.imagen}
-        onChange={manejarCambio}
-      />
-      <button type="submit">
+    <Form onSubmit={manejarEnvio}>
+      {/* Campo Nombre */}
+      <Form.Group controlId="nombre">
+        <Form.Label>Nombre del Producto</Form.Label>
+        <Form.Control
+          type="text"
+          name="nombre"
+          value={producto.nombre}
+          onChange={manejarCambio}
+          required
+        />
+      </Form.Group>
+
+      {/* Campo Categoría */}
+      <Form.Group controlId="categoria">
+        <Form.Label>Categoría</Form.Label>
+        <Form.Control
+          as="select"
+          name="categoria"
+          value={producto.categoria}
+          onChange={manejarCambio}
+        >
+          <option value="camisas">Camisas</option>
+          <option value="pantalones">Pantalones</option>
+          <option value="zapatos">Zapatos</option>
+          <option value="gorras">Gorras</option>
+        </Form.Control>
+      </Form.Group>
+
+      {/* Campo Descripción */}
+      <Form.Group controlId="descripcion">
+        <Form.Label>Descripción</Form.Label>
+        <Form.Control
+          type="text"
+          name="descripcion"
+          value={producto.descripcion}
+          onChange={manejarCambio}
+        />
+      </Form.Group>
+
+      {/* Campo Precio */}
+      <Form.Group controlId="precio">
+        <Form.Label>Precio</Form.Label>
+        <Form.Control
+          type="number"
+          name="precio"
+          value={producto.precio}
+          onChange={manejarCambio}
+          required
+        />
+      </Form.Group>
+
+      {/* Campo Cantidad */}
+      <Form.Group controlId="cantidad">
+        <Form.Label>Cantidad</Form.Label>
+        <Form.Control
+          type="number"
+          name="cantidad"
+          value={producto.cantidad}
+          onChange={manejarCambio}
+          required
+        />
+      </Form.Group>
+
+      {/* Campo Imagen */}
+      <Form.Group controlId="imagen">
+        <Form.Label>URL de la Imagen</Form.Label>
+        <Form.Control
+          type="text"
+          name="imagen"
+          value={producto.imagen}
+          onChange={manejarCambio}
+        />
+      </Form.Group>
+
+      <Button variant="primary" type="submit" className="mt-3">
         {productoSeleccionado ? 'Actualizar Producto' : 'Crear Producto'}
-      </button>
-    </form>
+      </Button>
+    </Form>
   );
 };
 
