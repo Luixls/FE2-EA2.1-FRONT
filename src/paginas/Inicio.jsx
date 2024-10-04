@@ -1,7 +1,9 @@
 // src/paginas/Inicio.jsx
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { Container, Row, Col, Card, Button } from 'react-bootstrap';
 import FormularioProducto from '../componentes/FormularioProducto';
+import './Inicio.css';  // Importa el archivo CSS
 
 const Inicio = () => {
   const [productos, setProductos] = useState([]);
@@ -20,22 +22,36 @@ const Inicio = () => {
   }, []);
 
   return (
-    <div>
-      <h1>Inventario de Productos</h1>
+    <Container className="my-5">
+      <h1 className="text-center mb-4">Inventario de Productos</h1>
+
+      {/* Formulario para agregar productos */}
       <FormularioProducto obtenerProductos={obtenerProductos} />
-      <ul>
+
+      {/* Listado de productos */}
+      <Row className="mt-4">
         {productos.map(producto => (
-          <li key={producto._id}>
-            <h3>{producto.nombre}</h3>
-            <p>{producto.categoria}</p>
-            <p>{producto.descripcion}</p>
-            <p>{producto.precio} USD</p>
-            <p>Cantidad: {producto.cantidad}</p>
-            <img src={producto.imagen} alt={producto.nombre} width="100" />
-          </li>
+          <Col md={4} key={producto._id} className="mb-4">
+            <Card>
+              <div className="img-container">
+                <Card.Img variant="top" src={producto.imagen} alt={producto.nombre} className="img-fixed" />
+              </div>
+              <Card.Body>
+                <Card.Title>{producto.nombre}</Card.Title>
+                <Card.Text>
+                  <strong>Categoría:</strong> {producto.categoria}<br />
+                  <strong>Descripción:</strong> {producto.descripcion}<br />
+                  <strong>Precio:</strong> {producto.precio} USD<br />
+                  <strong>Cantidad:</strong> {producto.cantidad}
+                </Card.Text>
+                <Button variant="primary">Editar</Button>
+                <Button variant="danger" className="ml-2">Eliminar</Button>
+              </Card.Body>
+            </Card>
+          </Col>
         ))}
-      </ul>
-    </div>
+      </Row>
+    </Container>
   );
 };
 

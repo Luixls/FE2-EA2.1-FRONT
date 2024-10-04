@@ -1,0 +1,15 @@
+/* src/paginas/Inicio.css */
+.img-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 500px;  /* Define la altura fija de la imagen */
+    overflow: hidden;
+  }
+  
+  .img-fixed {
+    max-height: 100%;
+    max-width: 100%;
+    object-fit: cover;  /* Esto asegura que la imagen cubra el contenedor sin deformarse */
+  }
+  
