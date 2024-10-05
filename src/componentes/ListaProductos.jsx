@@ -6,6 +6,7 @@ const ListaProductos = ({
   productos,
   abrirModalParaEditarProducto,
   eliminarProducto,
+  rolUsuario, // Añadimos el rol del usuario
 }) => {
   return (
     <Row className="mt-4">
@@ -31,19 +32,23 @@ const ListaProductos = ({
                 <br />
                 <strong>Cantidad:</strong> {producto.cantidad}
               </Card.Text>
-              <Button
-                variant="primary"
-                onClick={() => abrirModalParaEditarProducto(producto)}
-              >
-                Editar
-              </Button>
-              <Button
-                variant="danger"
-                className="ml-2"
-                onClick={() => eliminarProducto(producto._id)}
-              >
-                Eliminar
-              </Button>
+              {rolUsuario === "admin" && ( // Solo permite a admin editar o eliminar
+                <>
+                  <Button
+                    variant="primary"
+                    onClick={() => abrirModalParaEditarProducto(producto)}
+                  >
+                    Editar
+                  </Button>
+                  <Button
+                    variant="danger"
+                    className="ml-2"
+                    onClick={() => eliminarProducto(producto._id)}
+                  >
+                    Eliminar
+                  </Button>
+                </>
+              )}
             </Card.Body>
           </Card>
         </Col>

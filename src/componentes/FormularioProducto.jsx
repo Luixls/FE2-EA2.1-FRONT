@@ -1,7 +1,8 @@
 // src/componentes/FormularioProducto.jsx
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import { Form, Button, Modal } from "react-bootstrap";
+import AuthContext from "../context/AuthContext"; // Importar el contexto de autenticación
 
 const FormularioProducto = ({
   mostrar,
@@ -18,6 +19,8 @@ const FormularioProducto = ({
     imagen: "",
   });
 
+  const { usuarioAutenticado } = useContext(AuthContext); // Obtener el token del contexto de autenticación
+
   // Rellena el formulario con los datos del producto a editar
   useEffect(() => {
     if (productoSeleccionado) {
@@ -33,15 +36,27 @@ const FormularioProducto = ({
     e.preventDefault();
 
     try {
+      const token = localStorage.getItem("token"); // Obtener el token directamente de localStorage
+      const config = {
+        headers: {
+          Authorization: `Bearer ${token}`, // Incluye el token en las solicitudes protegidas
+        },
+      };
+
       if (productoSeleccionado) {
         // Actualizar producto existente
         await axios.put(
           `http://localhost:5000/api/productos/${producto._id}`,
-          producto
+          producto,
+          config
         );
       } else {
         // Crear nuevo producto
-        await axios.post("http://localhost:5000/api/productos", producto);
+        await axios.post(
+          "http://localhost:5000/api/productos",
+          producto,
+          config
+        );
       }
       obtenerProductos();
       limpiarFormulario();

@@ -21,10 +21,10 @@ const Inicio = () => {
   const [totalPaginas, setTotalPaginas] = useState(1);
   const [busqueda, setBusqueda] = useState("");
   const [categoria, setCategoria] = useState("");
-  const { usuarioAutenticado, login, registrar, logout } =
-    useContext(AuthContext);
+  const { usuarioAutenticado, rolUsuario, login, registrar, logout } =
+    useContext(AuthContext); // Añadimos el rolUsuario al contexto
   const [errorLogin, setErrorLogin] = useState(null);
-  const [errorRegistro, setErrorRegistro] = useState(null); // Estado para manejar errores de registro
+  const [errorRegistro, setErrorRegistro] = useState(null);
 
   const obtenerProductos = async (pagina = 1, query = "", categoria = "") => {
     try {
@@ -58,12 +58,19 @@ const Inicio = () => {
     setMostrarModalLogin(false);
     setMostrarModalRegistro(false);
     setErrorLogin(null);
-    setErrorRegistro(null); // Limpiar el error de registro al cerrar el modal
+    setErrorRegistro(null);
   };
 
   const eliminarProducto = async (id) => {
     try {
-      await axios.delete(`http://localhost:5000/api/productos/${id}`);
+      const token = localStorage.getItem("token"); // Obtener el token de localStorage
+      const config = {
+        headers: {
+          Authorization: `Bearer ${token}`, // Incluye el token en las solicitudes
+        },
+      };
+
+      await axios.delete(`http://localhost:5000/api/productos/${id}`, config);
       obtenerProductos(paginaActual, busqueda, categoria);
     } catch (error) {
       console.error("Error al eliminar el producto", error);
@@ -96,7 +103,7 @@ const Inicio = () => {
     });
 
     if (mensajeError) {
-      setErrorRegistro(mensajeError); // Mostrar mensaje de error de registro en la UI
+      setErrorRegistro(mensajeError);
     } else {
       cerrarModal();
     }
@@ -111,6 +118,7 @@ const Inicio = () => {
 
       <BotonesAutenticacion
         usuarioAutenticado={usuarioAutenticado}
+        rolUsuario={rolUsuario} // Pasamos el rol al componente
         abrirModalLogin={() => setMostrarModalLogin(true)}
         abrirModalRegistro={() => setMostrarModalRegistro(true)}
         logout={logout}
@@ -128,6 +136,7 @@ const Inicio = () => {
         productos={productos}
         abrirModalParaEditarProducto={abrirModalParaEditarProducto}
         eliminarProducto={eliminarProducto}
+        rolUsuario={rolUsuario} // Pasamos el rol al componente ListaProductos
       />
 
       <Pagination className="justify-content-center mt-4">
@@ -170,7 +179,7 @@ const Inicio = () => {
         mostrar={mostrarModalRegistro}
         cerrarModal={cerrarModal}
         manejarSubmitRegistro={manejarSubmitRegistro}
-        errorRegistro={errorRegistro} // Pasar errorRegistro a ModalRegistro
+        errorRegistro={errorRegistro}
       />
     </Container>
   );
