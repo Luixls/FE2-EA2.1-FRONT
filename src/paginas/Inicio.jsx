@@ -1,3 +1,4 @@
+// src/paginas/Inicio.jsx
 import React, { useEffect, useState, useContext } from 'react';
 import axios from 'axios';
 import { Container, Row, Col, Card, Button, Modal, Pagination, Form } from 'react-bootstrap';
