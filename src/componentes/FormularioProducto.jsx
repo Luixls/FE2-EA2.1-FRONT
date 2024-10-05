@@ -1,9 +1,9 @@
 // src/componentes/FormularioProducto.jsx
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Form, Button } from 'react-bootstrap';
+import { Form, Button, Modal } from 'react-bootstrap';
 
-const FormularioProducto = ({ obtenerProductos, productoSeleccionado, limpiarSeleccion }) => {
+const FormularioProducto = ({ mostrar, cerrarModal, obtenerProductos, productoSeleccionado }) => {
   const [producto, setProducto] = useState({
     nombre: '',
     categoria: 'camisas',
@@ -37,7 +37,7 @@ const FormularioProducto = ({ obtenerProductos, productoSeleccionado, limpiarSel
       }
       obtenerProductos();
       limpiarFormulario();
-      limpiarSeleccion(); // Restablece el modo de edición
+      cerrarModal(); // Cierra el modal después de agregar o editar el producto
     } catch (error) {
       console.error('Error al enviar el formulario', error);
     }
@@ -56,85 +56,86 @@ const FormularioProducto = ({ obtenerProductos, productoSeleccionado, limpiarSel
   };
 
   return (
-    <Form onSubmit={manejarEnvio}>
-      {/* Campo Nombre */}
-      <Form.Group controlId="nombre">
-        <Form.Label>Nombre del Producto</Form.Label>
-        <Form.Control
-          type="text"
-          name="nombre"
-          value={producto.nombre}
-          onChange={manejarCambio}
-          required
-        />
-      </Form.Group>
+    <Modal show={mostrar} onHide={cerrarModal}>
+      <Modal.Header closeButton>
+        <Modal.Title>{productoSeleccionado ? 'Editar Producto' : 'Agregar Producto'}</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <Form onSubmit={manejarEnvio}>
+          <Form.Group controlId="nombre">
+            <Form.Label>Nombre del Producto</Form.Label>
+            <Form.Control
+              type="text"
+              name="nombre"
+              value={producto.nombre}
+              onChange={manejarCambio}
+              required
+            />
+          </Form.Group>
 
-      {/* Campo Categoría */}
-      <Form.Group controlId="categoria">
-        <Form.Label>Categoría</Form.Label>
-        <Form.Control
-          as="select"
-          name="categoria"
-          value={producto.categoria}
-          onChange={manejarCambio}
-        >
-          <option value="camisas">Camisas</option>
-          <option value="pantalones">Pantalones</option>
-          <option value="zapatos">Zapatos</option>
-          <option value="gorras">Gorras</option>
-        </Form.Control>
-      </Form.Group>
+          <Form.Group controlId="categoria">
+            <Form.Label>Categoría</Form.Label>
+            <Form.Control
+              as="select"
+              name="categoria"
+              value={producto.categoria}
+              onChange={manejarCambio}
+            >
+              <option value="camisas">Camisas</option>
+              <option value="pantalones">Pantalones</option>
+              <option value="zapatos">Zapatos</option>
+              <option value="gorras">Gorras</option>
+            </Form.Control>
+          </Form.Group>
 
-      {/* Campo Descripción */}
-      <Form.Group controlId="descripcion">
-        <Form.Label>Descripción</Form.Label>
-        <Form.Control
-          type="text"
-          name="descripcion"
-          value={producto.descripcion}
-          onChange={manejarCambio}
-        />
-      </Form.Group>
+          <Form.Group controlId="descripcion">
+            <Form.Label>Descripción</Form.Label>
+            <Form.Control
+              type="text"
+              name="descripcion"
+              value={producto.descripcion}
+              onChange={manejarCambio}
+            />
+          </Form.Group>
 
-      {/* Campo Precio */}
-      <Form.Group controlId="precio">
-        <Form.Label>Precio</Form.Label>
-        <Form.Control
-          type="number"
-          name="precio"
-          value={producto.precio}
-          onChange={manejarCambio}
-          required
-        />
-      </Form.Group>
+          <Form.Group controlId="precio">
+            <Form.Label>Precio</Form.Label>
+            <Form.Control
+              type="number"
+              name="precio"
+              value={producto.precio}
+              onChange={manejarCambio}
+              required
+            />
+          </Form.Group>
 
-      {/* Campo Cantidad */}
-      <Form.Group controlId="cantidad">
-        <Form.Label>Cantidad</Form.Label>
-        <Form.Control
-          type="number"
-          name="cantidad"
-          value={producto.cantidad}
-          onChange={manejarCambio}
-          required
-        />
-      </Form.Group>
+          <Form.Group controlId="cantidad">
+            <Form.Label>Cantidad</Form.Label>
+            <Form.Control
+              type="number"
+              name="cantidad"
+              value={producto.cantidad}
+              onChange={manejarCambio}
+              required
+            />
+          </Form.Group>
 
-      {/* Campo Imagen */}
-      <Form.Group controlId="imagen">
-        <Form.Label>URL de la Imagen</Form.Label>
-        <Form.Control
-          type="text"
-          name="imagen"
-          value={producto.imagen}
-          onChange={manejarCambio}
-        />
-      </Form.Group>
+          <Form.Group controlId="imagen">
+            <Form.Label>URL de la Imagen</Form.Label>
+            <Form.Control
+              type="text"
+              name="imagen"
+              value={producto.imagen}
+              onChange={manejarCambio}
+            />
+          </Form.Group>
 
-      <Button variant="primary" type="submit" className="mt-3">
-        {productoSeleccionado ? 'Actualizar Producto' : 'Crear Producto'}
-      </Button>
-    </Form>
+          <Button variant="primary" type="submit" className="mt-3">
+            {productoSeleccionado ? 'Actualizar Producto' : 'Crear Producto'}
+          </Button>
+        </Form>
+      </Modal.Body>
+    </Modal>
   );
 };
 
