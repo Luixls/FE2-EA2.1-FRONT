@@ -10,6 +10,7 @@ import ModalRegistro from "../componentes/ModalRegistro";
 import FormularioProducto from "../componentes/FormularioProducto";
 import ModalPerfilUsuario from "../componentes/ModalPerfilUsuario"; // Importar el modal de perfil
 import ModalEditarUsuario from "../componentes/ModalEditarUsuario"; // Importar el modal de edición de usuario
+import ModalUsuarios from "../componentes/ModalUsuarios"; // Importar el nuevo modal
 import AuthContext from "../context/AuthContext";
 import "./Inicio.css";
 
@@ -20,10 +21,10 @@ const Inicio = () => {
   const [mostrarModalLogin, setMostrarModalLogin] = useState(false);
   const [mostrarModalRegistro, setMostrarModalRegistro] = useState(false);
   const [mostrarModalPerfil, setMostrarModalPerfil] = useState(false);
-  const [mostrarUsuarios, setMostrarUsuarios] = useState(false); // Nuevo estado para mostrar la tabla de usuarios
+  const [mostrarModalUsuarios, setMostrarModalUsuarios] = useState(false); // Estado para mostrar el modal de usuarios
   const [mostrarModalEditarUsuario, setMostrarModalEditarUsuario] =
     useState(false);
-  const [usuarios, setUsuarios] = useState([]); // Estado para los usuarios
+  const [usuarios, setUsuarios] = useState([]);
   const [usuarioSeleccionado, setUsuarioSeleccionado] = useState(null);
   const [paginaActual, setPaginaActual] = useState(1);
   const [totalPaginas, setTotalPaginas] = useState(1);
@@ -60,7 +61,7 @@ const Inicio = () => {
         config
       );
       setUsuarios(respuesta.data);
-      setMostrarUsuarios(true); // Mostrar la tabla de usuarios
+      setMostrarModalUsuarios(true); // Mostrar el modal de usuarios
     } catch (error) {
       console.error("Error al obtener los usuarios", error);
     }
@@ -98,6 +99,7 @@ const Inicio = () => {
     setMostrarModalLogin(false);
     setMostrarModalRegistro(false);
     setMostrarModalPerfil(false);
+    setMostrarModalUsuarios(false); // Cerrar el modal de usuarios
     setMostrarModalEditarUsuario(false);
     setErrorLogin(null);
     setErrorRegistro(null);
@@ -111,7 +113,6 @@ const Inicio = () => {
           Authorization: `Bearer ${token}`,
         },
       };
-
       await axios.delete(`http://localhost:5000/api/productos/${id}`, config);
       obtenerProductos(paginaActual, busqueda, categoria);
     } catch (error) {
@@ -183,7 +184,7 @@ const Inicio = () => {
 
       <ListaProductos
         productos={productos}
-        abrirModalParaEditarProducto={abrirModalParaEditarProducto}
+        abrirModalParaEditarProducto={abrirModalParaEditarProducto} // Corregido
         eliminarProducto={eliminarProducto}
         rolUsuario={rolUsuario}
       />
@@ -207,36 +208,6 @@ const Inicio = () => {
           disabled={paginaActual === totalPaginas}
         />
       </Pagination>
-
-      {mostrarUsuarios && rolUsuario === "admin" && usuarios.length > 0 && (
-        <Table striped bordered hover className="text-center mt-4">
-          <thead>
-            <tr>
-              <th>Nombre de Usuario</th>
-              <th>Email</th>
-              <th>Nombre Completo</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            {usuarios.map((usuario) => (
-              <tr key={usuario._id}>
-                <td>{usuario.nombreUsuario}</td>
-                <td>{usuario.email}</td>
-                <td>{usuario.nombreCompleto}</td>
-                <td>
-                  <Button
-                    variant="warning"
-                    onClick={() => abrirModalParaEditarUsuario(usuario)}
-                  >
-                    Editar
-                  </Button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </Table>
-      )}
 
       <FormularioProducto
         mostrar={mostrarModalProducto}
@@ -265,6 +236,13 @@ const Inicio = () => {
         mostrar={mostrarModalPerfil}
         cerrarModal={cerrarModal}
         usuarioId={usuarioAutenticado?._id}
+      />
+
+      <ModalUsuarios
+        mostrar={mostrarModalUsuarios}
+        cerrarModal={cerrarModal}
+        usuarios={usuarios}
+        abrirModalParaEditarUsuario={abrirModalParaEditarUsuario}
       />
 
       <ModalEditarUsuario
