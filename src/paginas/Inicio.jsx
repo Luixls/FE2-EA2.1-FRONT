@@ -1,7 +1,7 @@
 // src/paginas/Inicio.jsx
 import React, { useEffect, useState, useContext } from "react";
 import axios from "axios";
-import { Container, Pagination, Button, Table } from "react-bootstrap";
+import { Container, Pagination, Button } from "react-bootstrap";
 import BotonesAutenticacion from "../componentes/BotonesAutenticacion";
 import FiltroProductos from "../componentes/FiltroProductos";
 import ListaProductos from "../componentes/ListaProductos";
@@ -11,6 +11,7 @@ import FormularioProducto from "../componentes/FormularioProducto";
 import ModalPerfilUsuario from "../componentes/ModalPerfilUsuario"; // Importar el modal de perfil
 import ModalEditarUsuario from "../componentes/ModalEditarUsuario"; // Importar el modal de edición de usuario
 import ModalUsuarios from "../componentes/ModalUsuarios"; // Importar el nuevo modal
+import ModalFavoritos from "../componentes/ModalFavoritos"; // Nuevo componente para favoritos
 import AuthContext from "../context/AuthContext";
 import "./Inicio.css";
 
@@ -34,6 +35,8 @@ const Inicio = () => {
     useContext(AuthContext);
   const [errorLogin, setErrorLogin] = useState(null);
   const [errorRegistro, setErrorRegistro] = useState(null);
+  const [mostrarModalFavoritos, setMostrarModalFavoritos] = useState(false);
+  const [favoritos, setFavoritos] = useState([]); // Estado para almacenar los productos favoritos
 
   const obtenerProductos = async (pagina = 1, query = "", categoria = "") => {
     try {
@@ -64,6 +67,19 @@ const Inicio = () => {
       setMostrarModalUsuarios(true); // Mostrar el modal de usuarios
     } catch (error) {
       console.error("Error al obtener los usuarios", error);
+    }
+  };
+
+  const obtenerFavoritos = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const respuesta = await axios.get("http://localhost:5000/api/favoritos", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setFavoritos(respuesta.data);
+      setMostrarModalFavoritos(true);
+    } catch (error) {
+      console.error("Error al obtener favoritos", error);
     }
   };
 
@@ -100,6 +116,7 @@ const Inicio = () => {
     setMostrarModalRegistro(false);
     setMostrarModalPerfil(false);
     setMostrarModalUsuarios(false); // Cerrar el modal de usuarios
+    setMostrarModalFavoritos(false); // Cerrar modal de favoritos
     setMostrarModalEditarUsuario(false);
     setErrorLogin(null);
     setErrorRegistro(null);
@@ -170,9 +187,14 @@ const Inicio = () => {
       />
 
       {usuarioAutenticado && (
-        <div className="text-center mb-4">
-          <Button onClick={abrirModalPerfil}>Ver/Editar Perfil</Button>
-        </div>
+        <>
+          <div className="text-center mb-4">
+            <Button onClick={abrirModalPerfil}>Ver/Editar Perfil</Button>
+          </div>
+          <div className="text-center mb-4">
+            <Button onClick={obtenerFavoritos}>Ver Favoritos</Button>
+          </div>
+        </>
       )}
 
       <FiltroProductos
@@ -184,9 +206,10 @@ const Inicio = () => {
 
       <ListaProductos
         productos={productos}
-        abrirModalParaEditarProducto={abrirModalParaEditarProducto} // Corregido
+        abrirModalParaEditarProducto={abrirModalParaEditarProducto}
         eliminarProducto={eliminarProducto}
         rolUsuario={rolUsuario}
+        usuarioAutenticado={usuarioAutenticado} // Pasamos estado de autenticación
       />
 
       <Pagination className="justify-content-center mt-4">
@@ -250,6 +273,13 @@ const Inicio = () => {
         cerrarModal={cerrarModal}
         usuarioId={usuarioSeleccionado?._id}
         actualizarUsuarios={obtenerUsuarios}
+      />
+
+      <ModalFavoritos
+        mostrar={mostrarModalFavoritos}
+        cerrarModal={cerrarModal}
+        favoritos={favoritos}
+        setFavoritos={setFavoritos} // Para actualizar la lista de favoritos al eliminar
       />
     </Container>
   );

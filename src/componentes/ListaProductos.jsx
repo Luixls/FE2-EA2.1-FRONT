@@ -1,13 +1,31 @@
 // src/componentes/ListaProductos.jsx
 import React from "react";
 import { Row, Col, Card, Button } from "react-bootstrap";
+import axios from "axios";
 
 const ListaProductos = ({
   productos,
   abrirModalParaEditarProducto,
   eliminarProducto,
-  rolUsuario, // Añadimos el rol del usuario
+  rolUsuario,
+  usuarioAutenticado, // Pasamos el estado de autenticación
 }) => {
+  const agregarAFavoritos = async (productoId) => {
+    try {
+      const token = localStorage.getItem("token");
+      await axios.post(
+        `http://localhost:5000/api/favoritos/${productoId}`,
+        null,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      alert("Producto agregado a favoritos");
+    } catch (error) {
+      console.error("Error al agregar a favoritos", error);
+    }
+  };
+
   return (
     <Row className="mt-4">
       {productos.map((producto) => (
@@ -32,7 +50,15 @@ const ListaProductos = ({
                 <br />
                 <strong>Cantidad:</strong> {producto.cantidad}
               </Card.Text>
-              {rolUsuario === "admin" && ( // Solo permite a admin editar o eliminar
+              {usuarioAutenticado && (
+                <Button
+                  variant="success"
+                  onClick={() => agregarAFavoritos(producto._id)}
+                >
+                  Agregar a Favoritos
+                </Button>
+              )}
+              {rolUsuario === "admin" && (
                 <>
                   <Button
                     variant="primary"
