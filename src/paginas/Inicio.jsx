@@ -1,7 +1,7 @@
 // src/paginas/Inicio.jsx
 import React, { useEffect, useState, useContext } from "react";
 import axios from "axios";
-import { Container, Pagination, Button } from "react-bootstrap";
+import { Container, Pagination, Button, Table } from "react-bootstrap";
 import BotonesAutenticacion from "../componentes/BotonesAutenticacion";
 import FiltroProductos from "../componentes/FiltroProductos";
 import ListaProductos from "../componentes/ListaProductos";
@@ -9,6 +9,7 @@ import ModalLogin from "../componentes/ModalLogin";
 import ModalRegistro from "../componentes/ModalRegistro";
 import FormularioProducto from "../componentes/FormularioProducto";
 import ModalPerfilUsuario from "../componentes/ModalPerfilUsuario"; // Importar el modal de perfil
+import ModalEditarUsuario from "../componentes/ModalEditarUsuario"; // Importar el modal de edición de usuario
 import AuthContext from "../context/AuthContext";
 import "./Inicio.css";
 
@@ -18,13 +19,18 @@ const Inicio = () => {
   const [mostrarModalProducto, setMostrarModalProducto] = useState(false);
   const [mostrarModalLogin, setMostrarModalLogin] = useState(false);
   const [mostrarModalRegistro, setMostrarModalRegistro] = useState(false);
-  const [mostrarModalPerfil, setMostrarModalPerfil] = useState(false); // Nuevo estado para modal perfil
+  const [mostrarModalPerfil, setMostrarModalPerfil] = useState(false);
+  const [mostrarUsuarios, setMostrarUsuarios] = useState(false); // Nuevo estado para mostrar la tabla de usuarios
+  const [mostrarModalEditarUsuario, setMostrarModalEditarUsuario] =
+    useState(false);
+  const [usuarios, setUsuarios] = useState([]); // Estado para los usuarios
+  const [usuarioSeleccionado, setUsuarioSeleccionado] = useState(null);
   const [paginaActual, setPaginaActual] = useState(1);
   const [totalPaginas, setTotalPaginas] = useState(1);
   const [busqueda, setBusqueda] = useState("");
   const [categoria, setCategoria] = useState("");
   const { usuarioAutenticado, rolUsuario, login, registrar, logout } =
-    useContext(AuthContext); // Añadimos el rolUsuario al contexto
+    useContext(AuthContext);
   const [errorLogin, setErrorLogin] = useState(null);
   const [errorRegistro, setErrorRegistro] = useState(null);
 
@@ -38,6 +44,25 @@ const Inicio = () => {
       setTotalPaginas(respuesta.data.totalPages);
     } catch (error) {
       console.error("Error al obtener los productos", error);
+    }
+  };
+
+  const obtenerUsuarios = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const config = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      };
+      const respuesta = await axios.get(
+        "http://localhost:5000/api/usuarios",
+        config
+      );
+      setUsuarios(respuesta.data);
+      setMostrarUsuarios(true); // Mostrar la tabla de usuarios
+    } catch (error) {
+      console.error("Error al obtener los usuarios", error);
     }
   };
 
@@ -59,21 +84,31 @@ const Inicio = () => {
     setMostrarModalPerfil(true);
   };
 
+  const abrirModalParaVerUsuarios = () => {
+    obtenerUsuarios(); // Llamar la función para obtener los usuarios registrados
+  };
+
+  const abrirModalParaEditarUsuario = (usuario) => {
+    setUsuarioSeleccionado(usuario);
+    setMostrarModalEditarUsuario(true);
+  };
+
   const cerrarModal = () => {
     setMostrarModalProducto(false);
     setMostrarModalLogin(false);
     setMostrarModalRegistro(false);
-    setMostrarModalPerfil(false); // Cerrar modal perfil
+    setMostrarModalPerfil(false);
+    setMostrarModalEditarUsuario(false);
     setErrorLogin(null);
     setErrorRegistro(null);
   };
 
   const eliminarProducto = async (id) => {
     try {
-      const token = localStorage.getItem("token"); // Obtener el token de localStorage
+      const token = localStorage.getItem("token");
       const config = {
         headers: {
-          Authorization: `Bearer ${token}`, // Incluye el token en las solicitudes
+          Authorization: `Bearer ${token}`,
         },
       };
 
@@ -125,14 +160,14 @@ const Inicio = () => {
 
       <BotonesAutenticacion
         usuarioAutenticado={usuarioAutenticado}
-        rolUsuario={rolUsuario} // Pasamos el rol al componente
+        rolUsuario={rolUsuario}
         abrirModalLogin={() => setMostrarModalLogin(true)}
         abrirModalRegistro={() => setMostrarModalRegistro(true)}
         logout={logout}
         abrirModalParaCrearProducto={abrirModalParaCrearProducto}
+        abrirModalParaVerUsuarios={abrirModalParaVerUsuarios}
       />
 
-      {/* Mostrar botón para ver/editar perfil si está autenticado */}
       {usuarioAutenticado && (
         <div className="text-center mb-4">
           <Button onClick={abrirModalPerfil}>Ver/Editar Perfil</Button>
@@ -150,7 +185,7 @@ const Inicio = () => {
         productos={productos}
         abrirModalParaEditarProducto={abrirModalParaEditarProducto}
         eliminarProducto={eliminarProducto}
-        rolUsuario={rolUsuario} // Pasamos el rol al componente ListaProductos
+        rolUsuario={rolUsuario}
       />
 
       <Pagination className="justify-content-center mt-4">
@@ -172,6 +207,36 @@ const Inicio = () => {
           disabled={paginaActual === totalPaginas}
         />
       </Pagination>
+
+      {mostrarUsuarios && rolUsuario === "admin" && usuarios.length > 0 && (
+        <Table striped bordered hover className="text-center mt-4">
+          <thead>
+            <tr>
+              <th>Nombre de Usuario</th>
+              <th>Email</th>
+              <th>Nombre Completo</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            {usuarios.map((usuario) => (
+              <tr key={usuario._id}>
+                <td>{usuario.nombreUsuario}</td>
+                <td>{usuario.email}</td>
+                <td>{usuario.nombreCompleto}</td>
+                <td>
+                  <Button
+                    variant="warning"
+                    onClick={() => abrirModalParaEditarUsuario(usuario)}
+                  >
+                    Editar
+                  </Button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </Table>
+      )}
 
       <FormularioProducto
         mostrar={mostrarModalProducto}
@@ -196,11 +261,17 @@ const Inicio = () => {
         errorRegistro={errorRegistro}
       />
 
-      {/* Modal para editar perfil de usuario */}
       <ModalPerfilUsuario
         mostrar={mostrarModalPerfil}
         cerrarModal={cerrarModal}
-        usuarioId={usuarioAutenticado?._id} // Pasar el ID del usuario autenticado
+        usuarioId={usuarioAutenticado?._id}
+      />
+
+      <ModalEditarUsuario
+        mostrar={mostrarModalEditarUsuario}
+        cerrarModal={cerrarModal}
+        usuarioId={usuarioSeleccionado?._id}
+        actualizarUsuarios={obtenerUsuarios}
       />
     </Container>
   );
