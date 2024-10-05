@@ -1,13 +1,13 @@
-// src/paginas/Inicio.jsx
 import React, { useEffect, useState, useContext } from "react";
 import axios from "axios";
-import { Container, Pagination } from "react-bootstrap";
+import { Container, Pagination, Button } from "react-bootstrap";
 import BotonesAutenticacion from "../componentes/BotonesAutenticacion";
 import FiltroProductos from "../componentes/FiltroProductos";
 import ListaProductos from "../componentes/ListaProductos";
 import ModalLogin from "../componentes/ModalLogin";
 import ModalRegistro from "../componentes/ModalRegistro";
 import FormularioProducto from "../componentes/FormularioProducto";
+import ModalPerfilUsuario from "../componentes/ModalPerfilUsuario"; // Importar el modal de perfil
 import AuthContext from "../context/AuthContext";
 import "./Inicio.css";
 
@@ -17,6 +17,7 @@ const Inicio = () => {
   const [mostrarModalProducto, setMostrarModalProducto] = useState(false);
   const [mostrarModalLogin, setMostrarModalLogin] = useState(false);
   const [mostrarModalRegistro, setMostrarModalRegistro] = useState(false);
+  const [mostrarModalPerfil, setMostrarModalPerfil] = useState(false); // Nuevo estado para modal perfil
   const [paginaActual, setPaginaActual] = useState(1);
   const [totalPaginas, setTotalPaginas] = useState(1);
   const [busqueda, setBusqueda] = useState("");
@@ -53,10 +54,15 @@ const Inicio = () => {
     setMostrarModalProducto(true);
   };
 
+  const abrirModalPerfil = () => {
+    setMostrarModalPerfil(true);
+  };
+
   const cerrarModal = () => {
     setMostrarModalProducto(false);
     setMostrarModalLogin(false);
     setMostrarModalRegistro(false);
+    setMostrarModalPerfil(false); // Cerrar modal perfil
     setErrorLogin(null);
     setErrorRegistro(null);
   };
@@ -125,6 +131,13 @@ const Inicio = () => {
         abrirModalParaCrearProducto={abrirModalParaCrearProducto}
       />
 
+      {/* Mostrar botón para ver/editar perfil si está autenticado */}
+      {usuarioAutenticado && (
+        <div className="text-center mb-4">
+          <Button onClick={abrirModalPerfil}>Ver/Editar Perfil</Button>
+        </div>
+      )}
+
       <FiltroProductos
         busqueda={busqueda}
         manejarCambioBusqueda={manejarCambioBusqueda}
@@ -180,6 +193,13 @@ const Inicio = () => {
         cerrarModal={cerrarModal}
         manejarSubmitRegistro={manejarSubmitRegistro}
         errorRegistro={errorRegistro}
+      />
+
+      {/* Modal para editar perfil de usuario */}
+      <ModalPerfilUsuario
+        mostrar={mostrarModalPerfil}
+        cerrarModal={cerrarModal}
+        usuarioId={usuarioAutenticado?._id} // Pasar el ID del usuario autenticado
       />
     </Container>
   );
