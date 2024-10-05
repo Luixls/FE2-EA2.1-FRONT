@@ -1,16 +1,21 @@
 // src/componentes/FormularioProducto.jsx
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { Form, Button, Modal } from 'react-bootstrap';
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import { Form, Button, Modal } from "react-bootstrap";
 
-const FormularioProducto = ({ mostrar, cerrarModal, obtenerProductos, productoSeleccionado }) => {
+const FormularioProducto = ({
+  mostrar,
+  cerrarModal,
+  obtenerProductos,
+  productoSeleccionado,
+}) => {
   const [producto, setProducto] = useState({
-    nombre: '',
-    categoria: 'camisas',
-    descripcion: '',
+    nombre: "",
+    categoria: "camisas",
+    descripcion: "",
     precio: 0,
     cantidad: 0,
-    imagen: ''
+    imagen: "",
   });
 
   // Rellena el formulario con los datos del producto a editar
@@ -30,35 +35,40 @@ const FormularioProducto = ({ mostrar, cerrarModal, obtenerProductos, productoSe
     try {
       if (productoSeleccionado) {
         // Actualizar producto existente
-        await axios.put(`http://localhost:5000/api/productos/${producto._id}`, producto);
+        await axios.put(
+          `http://localhost:5000/api/productos/${producto._id}`,
+          producto
+        );
       } else {
         // Crear nuevo producto
-        await axios.post('http://localhost:5000/api/productos', producto);
+        await axios.post("http://localhost:5000/api/productos", producto);
       }
       obtenerProductos();
       limpiarFormulario();
       cerrarModal(); // Cierra el modal después de agregar o editar el producto
     } catch (error) {
-      console.error('Error al enviar el formulario', error);
+      console.error("Error al enviar el formulario", error);
     }
   };
 
   // Función para limpiar el formulario después de agregar o editar un producto
   const limpiarFormulario = () => {
     setProducto({
-      nombre: '',
-      categoria: 'camisas',
-      descripcion: '',
+      nombre: "",
+      categoria: "camisas",
+      descripcion: "",
       precio: 0,
       cantidad: 0,
-      imagen: ''
+      imagen: "",
     });
   };
 
   return (
     <Modal show={mostrar} onHide={cerrarModal}>
       <Modal.Header closeButton>
-        <Modal.Title>{productoSeleccionado ? 'Editar Producto' : 'Agregar Producto'}</Modal.Title>
+        <Modal.Title>
+          {productoSeleccionado ? "Editar Producto" : "Agregar Producto"}
+        </Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <Form onSubmit={manejarEnvio}>
@@ -131,7 +141,7 @@ const FormularioProducto = ({ mostrar, cerrarModal, obtenerProductos, productoSe
           </Form.Group>
 
           <Button variant="primary" type="submit" className="mt-3">
-            {productoSeleccionado ? 'Actualizar Producto' : 'Crear Producto'}
+            {productoSeleccionado ? "Actualizar Producto" : "Crear Producto"}
           </Button>
         </Form>
       </Modal.Body>

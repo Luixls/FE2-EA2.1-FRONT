@@ -1,19 +1,19 @@
 // src/componentes/Registro.jsx
-import React, { useState, useContext } from 'react';
-import AuthContext from '../context/AuthContext';
+import React, { useState, useContext } from "react";
+import AuthContext from "../context/AuthContext";
 
 const Registro = () => {
   const { registrar } = useContext(AuthContext);
-  const [nombreUsuario, setNombreUsuario] = useState('');
-  const [nombreCompleto, setNombreCompleto] = useState('');
-  const [email, setEmail] = useState('');
-  const [contraseña, setContraseña] = useState('');
-  const [confirmarContraseña, setConfirmarContraseña] = useState('');
+  const [nombreUsuario, setNombreUsuario] = useState("");
+  const [nombreCompleto, setNombreCompleto] = useState("");
+  const [email, setEmail] = useState("");
+  const [contraseña, setContraseña] = useState("");
+  const [confirmarContraseña, setConfirmarContraseña] = useState("");
 
   const manejarSubmit = async (e) => {
     e.preventDefault();
     if (contraseña !== confirmarContraseña) {
-      alert('Las contraseñas no coinciden');
+      alert("Las contraseñas no coinciden");
       return;
     }
 
@@ -23,11 +23,11 @@ const Registro = () => {
         nombreCompleto,
         email,
         contraseña,
-        confirmarContraseña
+        confirmarContraseña,
       });
-      alert('Registro exitoso');
+      alert("Registro exitoso");
     } catch (error) {
-      alert('Error al registrar');
+      alert("Error al registrar");
     }
   };
 

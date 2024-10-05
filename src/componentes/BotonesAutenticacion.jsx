@@ -1,8 +1,14 @@
 // src/componentes/BotonesAutenticacion.jsx
-import React from 'react';
-import { Button } from 'react-bootstrap';
+import React from "react";
+import { Button } from "react-bootstrap";
 
-const BotonesAutenticacion = ({ usuarioAutenticado, abrirModalLogin, abrirModalRegistro, logout, abrirModalParaCrearProducto }) => {
+const BotonesAutenticacion = ({
+  usuarioAutenticado,
+  abrirModalLogin,
+  abrirModalRegistro,
+  logout,
+  abrirModalParaCrearProducto,
+}) => {
   return (
     <div className="text-center mb-4">
       {usuarioAutenticado ? (
@@ -19,7 +25,11 @@ const BotonesAutenticacion = ({ usuarioAutenticado, abrirModalLogin, abrirModalR
           <Button variant="primary" onClick={abrirModalLogin}>
             Iniciar Sesión
           </Button>
-          <Button variant="secondary" onClick={abrirModalRegistro} className="ml-2">
+          <Button
+            variant="secondary"
+            onClick={abrirModalRegistro}
+            className="ml-2"
+          >
             Registrarse
           </Button>
         </>

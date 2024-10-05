@@ -1,19 +1,19 @@
 // src/componentes/Login.jsx
-import React, { useState, useContext } from 'react';
-import AuthContext from '../context/AuthContext';
+import React, { useState, useContext } from "react";
+import AuthContext from "../context/AuthContext";
 
 const Login = () => {
   const { login } = useContext(AuthContext);
-  const [email, setEmail] = useState('');
-  const [contraseña, setContraseña] = useState('');
+  const [email, setEmail] = useState("");
+  const [contraseña, setContraseña] = useState("");
 
   const manejarSubmit = async (e) => {
     e.preventDefault();
     try {
       await login(email, contraseña);
-      alert('Inicio de sesión exitoso');
+      alert("Inicio de sesión exitoso");
     } catch (error) {
-      alert('Error al iniciar sesión');
+      alert("Error al iniciar sesión");
     }
   };
 

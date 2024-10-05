@@ -1,15 +1,15 @@
 // src/paginas/Inicio.jsx
-import React, { useEffect, useState, useContext } from 'react';
-import axios from 'axios';
-import { Container, Pagination } from 'react-bootstrap';
-import BotonesAutenticacion from '../componentes/BotonesAutenticacion';
-import FiltroProductos from '../componentes/FiltroProductos';
-import ListaProductos from '../componentes/ListaProductos';
-import ModalLogin from '../componentes/ModalLogin';
-import ModalRegistro from '../componentes/ModalRegistro';
-import FormularioProducto from '../componentes/FormularioProducto';
-import AuthContext from '../context/AuthContext';
-import './Inicio.css';
+import React, { useEffect, useState, useContext } from "react";
+import axios from "axios";
+import { Container, Pagination } from "react-bootstrap";
+import BotonesAutenticacion from "../componentes/BotonesAutenticacion";
+import FiltroProductos from "../componentes/FiltroProductos";
+import ListaProductos from "../componentes/ListaProductos";
+import ModalLogin from "../componentes/ModalLogin";
+import ModalRegistro from "../componentes/ModalRegistro";
+import FormularioProducto from "../componentes/FormularioProducto";
+import AuthContext from "../context/AuthContext";
+import "./Inicio.css";
 
 const Inicio = () => {
   const [productos, setProductos] = useState([]);
@@ -19,20 +19,23 @@ const Inicio = () => {
   const [mostrarModalRegistro, setMostrarModalRegistro] = useState(false);
   const [paginaActual, setPaginaActual] = useState(1);
   const [totalPaginas, setTotalPaginas] = useState(1);
-  const [busqueda, setBusqueda] = useState('');
-  const [categoria, setCategoria] = useState('');
-  const { usuarioAutenticado, login, registrar, logout } = useContext(AuthContext);
+  const [busqueda, setBusqueda] = useState("");
+  const [categoria, setCategoria] = useState("");
+  const { usuarioAutenticado, login, registrar, logout } =
+    useContext(AuthContext);
   const [errorLogin, setErrorLogin] = useState(null);
-  const [errorRegistro, setErrorRegistro] = useState(null);  // Estado para manejar errores de registro
+  const [errorRegistro, setErrorRegistro] = useState(null); // Estado para manejar errores de registro
 
-  const obtenerProductos = async (pagina = 1, query = '', categoria = '') => {
+  const obtenerProductos = async (pagina = 1, query = "", categoria = "") => {
     try {
-      const respuesta = await axios.get(`http://localhost:5000/api/productos?page=${pagina}&limit=6&query=${query}&categoria=${categoria}`);
+      const respuesta = await axios.get(
+        `http://localhost:5000/api/productos?page=${pagina}&limit=6&query=${query}&categoria=${categoria}`
+      );
       setProductos(respuesta.data.productos);
       setPaginaActual(respuesta.data.currentPage);
       setTotalPaginas(respuesta.data.totalPages);
     } catch (error) {
-      console.error('Error al obtener los productos', error);
+      console.error("Error al obtener los productos", error);
     }
   };
 
@@ -54,8 +57,8 @@ const Inicio = () => {
     setMostrarModalProducto(false);
     setMostrarModalLogin(false);
     setMostrarModalRegistro(false);
-    setErrorLogin(null); 
-    setErrorRegistro(null);  // Limpiar el error de registro al cerrar el modal
+    setErrorLogin(null);
+    setErrorRegistro(null); // Limpiar el error de registro al cerrar el modal
   };
 
   const eliminarProducto = async (id) => {
@@ -63,7 +66,7 @@ const Inicio = () => {
       await axios.delete(`http://localhost:5000/api/productos/${id}`);
       obtenerProductos(paginaActual, busqueda, categoria);
     } catch (error) {
-      console.error('Error al eliminar el producto', error);
+      console.error("Error al eliminar el producto", error);
     }
   };
 
@@ -83,11 +86,17 @@ const Inicio = () => {
     const email = e.target.email.value;
     const contraseña = e.target.contraseña.value;
     const confirmarContraseña = e.target.confirmarContraseña.value;
-  
-    const mensajeError = await registrar({ nombreUsuario, nombreCompleto, email, contraseña, confirmarContraseña });
-    
+
+    const mensajeError = await registrar({
+      nombreUsuario,
+      nombreCompleto,
+      email,
+      contraseña,
+      confirmarContraseña,
+    });
+
     if (mensajeError) {
-      setErrorRegistro(mensajeError);  // Mostrar mensaje de error de registro en la UI
+      setErrorRegistro(mensajeError); // Mostrar mensaje de error de registro en la UI
     } else {
       cerrarModal();
     }
@@ -122,20 +131,32 @@ const Inicio = () => {
       />
 
       <Pagination className="justify-content-center mt-4">
-        <Pagination.Prev onClick={() => setPaginaActual(paginaActual - 1)} disabled={paginaActual === 1} />
+        <Pagination.Prev
+          onClick={() => setPaginaActual(paginaActual - 1)}
+          disabled={paginaActual === 1}
+        />
         {[...Array(totalPaginas).keys()].map((numero) => (
-          <Pagination.Item key={numero + 1} active={numero + 1 === paginaActual} onClick={() => setPaginaActual(numero + 1)}>
+          <Pagination.Item
+            key={numero + 1}
+            active={numero + 1 === paginaActual}
+            onClick={() => setPaginaActual(numero + 1)}
+          >
             {numero + 1}
           </Pagination.Item>
         ))}
-        <Pagination.Next onClick={() => setPaginaActual(paginaActual + 1)} disabled={paginaActual === totalPaginas} />
+        <Pagination.Next
+          onClick={() => setPaginaActual(paginaActual + 1)}
+          disabled={paginaActual === totalPaginas}
+        />
       </Pagination>
 
       <FormularioProducto
         mostrar={mostrarModalProducto}
         cerrarModal={cerrarModal}
         productoSeleccionado={productoSeleccionado}
-        obtenerProductos={() => obtenerProductos(paginaActual, busqueda, categoria)}
+        obtenerProductos={() =>
+          obtenerProductos(paginaActual, busqueda, categoria)
+        }
       />
 
       <ModalLogin

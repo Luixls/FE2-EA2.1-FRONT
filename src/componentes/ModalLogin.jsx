@@ -1,10 +1,15 @@
 // src/componentes/ModalLogin.jsx
-import React, { useState } from 'react';
-import { Modal, Form, Button, Alert } from 'react-bootstrap';
+import React, { useState } from "react";
+import { Modal, Form, Button, Alert } from "react-bootstrap";
 
-const ModalLogin = ({ mostrar, cerrarModal, manejarSubmitLogin, errorLogin }) => {
-  const [email, setEmail] = useState('');
-  const [contraseña, setContraseña] = useState('');
+const ModalLogin = ({
+  mostrar,
+  cerrarModal,
+  manejarSubmitLogin,
+  errorLogin,
+}) => {
+  const [email, setEmail] = useState("");
+  const [contraseña, setContraseña] = useState("");
 
   const manejarSubmit = async (e) => {
     e.preventDefault();
@@ -22,22 +27,22 @@ const ModalLogin = ({ mostrar, cerrarModal, manejarSubmitLogin, errorLogin }) =>
         <Form onSubmit={manejarSubmit}>
           <Form.Group controlId="email">
             <Form.Label>Email</Form.Label>
-            <Form.Control 
-              type="email" 
-              value={email} 
-              onChange={(e) => setEmail(e.target.value)} 
-              placeholder="Ingresa tu email" 
-              required 
+            <Form.Control
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="Ingresa tu email"
+              required
             />
           </Form.Group>
           <Form.Group controlId="contraseña" className="mt-3">
             <Form.Label>Contraseña</Form.Label>
-            <Form.Control 
-              type="password" 
-              value={contraseña} 
-              onChange={(e) => setContraseña(e.target.value)} 
-              placeholder="Ingresa tu contraseña" 
-              required 
+            <Form.Control
+              type="password"
+              value={contraseña}
+              onChange={(e) => setContraseña(e.target.value)}
+              placeholder="Ingresa tu contraseña"
+              required
             />
           </Form.Group>
           <Button type="submit" variant="primary" className="mt-3">
