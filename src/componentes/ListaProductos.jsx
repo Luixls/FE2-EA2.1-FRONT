@@ -8,7 +8,7 @@ const ListaProductos = ({
   abrirModalParaEditarProducto,
   eliminarProducto,
   rolUsuario,
-  usuarioAutenticado, // Pasamos el estado de autenticación
+  usuarioAutenticado,
 }) => {
   const agregarAFavoritos = async (productoId) => {
     try {
@@ -30,7 +30,7 @@ const ListaProductos = ({
     <Row className="mt-4">
       {productos.map((producto) => (
         <Col md={4} key={producto._id} className="mb-4">
-          <Card>
+          <Card style={{ boxShadow: "var(--shadow)", borderRadius: "12px" }}>
             <div className="img-container">
               <Card.Img
                 variant="top"
@@ -40,7 +40,11 @@ const ListaProductos = ({
               />
             </div>
             <Card.Body>
-              <Card.Title>{producto.nombre}</Card.Title>
+              <Card.Title
+                style={{ fontWeight: "bold", color: "var(--primary-color)" }}
+              >
+                {producto.nombre}
+              </Card.Title>
               <Card.Text>
                 <strong>Categoría:</strong> {producto.categoria}
                 <br />
@@ -52,7 +56,7 @@ const ListaProductos = ({
               </Card.Text>
               {usuarioAutenticado && (
                 <Button
-                  variant="success"
+                  style={{ backgroundColor: "var(--accent-color)" }}
                   onClick={() => agregarAFavoritos(producto._id)}
                 >
                   Agregar a Favoritos

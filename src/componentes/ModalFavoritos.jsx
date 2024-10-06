@@ -1,4 +1,3 @@
-// src/componentes/ModalFavoritos.jsx
 import React from "react";
 import { Modal, Table, Button, Alert } from "react-bootstrap";
 import axios from "axios";
@@ -10,6 +9,7 @@ const ModalFavoritos = ({ mostrar, cerrarModal, favoritos, setFavoritos }) => {
       await axios.delete(`http://localhost:5000/api/favoritos/${productoId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
+      // Filtrar la lista de favoritos para eliminar el producto
       setFavoritos(favoritos.filter((producto) => producto._id !== productoId));
       alert("Producto eliminado de favoritos");
     } catch (error) {
@@ -26,7 +26,7 @@ const ModalFavoritos = ({ mostrar, cerrarModal, favoritos, setFavoritos }) => {
         {favoritos.length > 0 ? (
           <div style={{ overflowX: "auto" }}>
             <Table striped bordered hover>
-              <thead>
+              <thead style={{ backgroundColor: "#007BFF", color: "white" }}>
                 <tr>
                   <th>Nombre</th>
                   <th>Categoría</th>
@@ -53,6 +53,7 @@ const ModalFavoritos = ({ mostrar, cerrarModal, favoritos, setFavoritos }) => {
                           width: "75px",
                           height: "75px",
                           objectFit: "cover",
+                          borderRadius: "8px",
                         }}
                       />
                     </td>

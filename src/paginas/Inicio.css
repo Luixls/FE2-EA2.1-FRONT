@@ -3,12 +3,32 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 250px;
+  height: 350px;
   overflow: hidden;
+  border-radius: 10px;
+  background-color: var(--light-gray);
+  box-shadow: var(--shadow);
 }
 
 .img-fixed {
   max-height: 100%;
-  max-width: 60%;
+  max-width: 80%;
   object-fit: cover;
+}
+
+h1 {
+  color: var(--primary-color);
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
+.container {
+  margin-top: 30px;
+}
+
+.pagination {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
 }
