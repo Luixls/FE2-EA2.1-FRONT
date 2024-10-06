@@ -60,7 +60,7 @@ const FormularioProducto = ({
       }
       obtenerProductos();
       limpiarFormulario();
-      cerrarModal(); // Cierra el modal después de agregar o editar el producto
+      cerrarModal(); // Se cierra el modal después de agregar o editar el producto
     } catch (error) {
       console.error("Error al enviar el formulario", error);
     }

@@ -1,7 +1,7 @@
 // src/App.jsx
 import React from "react";
 import Inicio from "./paginas/Inicio";
-import { AuthProvider } from "./context/AuthContext"; // Importar el contexto
+import { AuthProvider } from "./context/AuthContext";
 
 function App() {
   return (

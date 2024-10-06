@@ -56,7 +56,3 @@ select {
   border: 1px solid #ddd;
   border-radius: 4px;
 }
-
-input[type="number"] {
-  -moz-appearance: textfield;
-}

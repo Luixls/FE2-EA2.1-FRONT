@@ -19,7 +19,7 @@ export const AuthProvider = ({ children }) => {
     try {
       const respuesta = await axios.get("http://localhost:5000/api/auth/me", {
         headers: {
-          Authorization: `Bearer ${token}`, // Asegúrate de enviar el token correctamente
+          Authorization: `Bearer ${token}`,
         },
       });
       setUsuarioAutenticado(respuesta.data);

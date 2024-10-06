@@ -11,7 +11,7 @@ import FormularioProducto from "../componentes/FormularioProducto";
 import ModalPerfilUsuario from "../componentes/ModalPerfilUsuario"; // Importar el modal de perfil
 import ModalEditarUsuario from "../componentes/ModalEditarUsuario"; // Importar el modal de edición de usuario
 import ModalUsuarios from "../componentes/ModalUsuarios"; // Importar el nuevo modal
-import ModalFavoritos from "../componentes/ModalFavoritos"; // Nuevo componente para favoritos
+import ModalFavoritos from "../componentes/ModalFavoritos"; // Componente para favoritos
 import AuthContext from "../context/AuthContext";
 import "./Inicio.css";
 
